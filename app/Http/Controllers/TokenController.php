@@ -13,43 +13,93 @@ class TokenController extends Controller
     // Generate a new token
     public function generateToken(Request $request)
     {
-        $tokenString = Str::random(60);
+        try {
+            // Generate a random token string
+            $tokenString = Str::random(60);
+            $expiresAt = Carbon::now()->addHour();
 
-        $expiresAt = Carbon::now()->addHour();
+            // Create and save the token
+            $token = new Token();
+            $token->token = $tokenString;
+            $token->expires_at = $expiresAt;
+            $token->save();
 
-        $token = new Token();
-        $token->token = $tokenString;
-        $token->expires_at = $expiresAt;
-        $token->save();
-
-        return response()->json([
-            'token' => $tokenString,
-            'expires_at' => $expiresAt
-        ], 201);
+            // Return the created token details
+            return response()->json([
+                'status' => 'success',
+                'code' => 201,
+                'message' => 'Token created successfully.',
+                'data' => [
+                    'token' => $tokenString,
+                    'expires_at' => $expiresAt
+                ]
+            ], 201);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 'error',
+                'code' => 500,
+                'message' => 'An error occurred while creating the token.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     // Retrieve token details
     public function getToken(Request $request)
     {
-        $tokenString = $request->query('token');
+        try {
+            // Get token from query parameters
+            $tokenString = $request->query('token');
 
-        if (!$tokenString) {
-            return response()->json(['error' => 'Token parameter is required'], 400);
+            // Validate that the token is provided
+            if (!$tokenString) {
+                return response()->json([
+                    'status' => 'error',
+                    'code' => 400,
+                    'message' => 'Token parameter is required.'
+                ], 400);
+            }
+
+            // Find the token in the database
+            $token = Token::where('token', $tokenString)->first();
+
+            // If token does not exist
+            if (!$token) {
+                return response()->json([
+                    'status' => 'error',
+                    'code' => 404,
+                    'message' => 'Token not found.'
+                ], 404);
+            }
+
+            // Check if the token is expired
+            if (Carbon::now()->greaterThan($token->expires_at)) {
+                return response()->json([
+                    'status' => 'error',
+                    'code' => 410,
+                    'message' => 'Token has expired.'
+                ], 410);
+            }
+
+            // Return the token details
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Token retrieved successfully.',
+                'data' => [
+                    'token' => $token->token,
+                    'expires_at' => $token->expires_at
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'status' => 'error',
+                'code' => 500,
+                'message' => 'An error occurred while retrieving the token.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $token = Token::where('token', $tokenString)->first();
-
-        if (!$token) {
-            return response()->json(['error' => 'Token not found'], 404);
-        }
-
-        if (Carbon::now()->greaterThan($token->expires_at)) {
-            return response()->json(['error' => 'Token has expired'], 410);
-        }
-
-        return response()->json([
-            'token' => $token->token,
-            'expires_at' => $token->expires_at
-        ], 200);
     }
 }
