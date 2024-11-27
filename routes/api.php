@@ -18,7 +18,6 @@ Route::get('/employees/{id}', [EmployeeController::class, 'show']);
 Route::get('/employees/name/{full_name}', [EmployeeController::class, 'showname']);
 Route::delete('/employees/delete/{id}', [EmployeeController::class, 'destroy']);
 
-
 // Admin login and register
 Route::post('/admin/register', [AuthController::class, 'register']);
 Route::post('/admin/login', [AuthController::class, 'login']);

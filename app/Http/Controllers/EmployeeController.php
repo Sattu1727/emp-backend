@@ -23,8 +23,8 @@ class EmployeeController extends Controller
                 'relation' => 'nullable|string|max:100',
                 'guardian_mobile' => 'nullable|string|max:15',
                 'g_address' => 'nullable|string|max:500',
-                'image' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-                'id_prove' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                'image' => 'nullable|string|max:500',
+                'id_prove' => 'nullable|string|max:500',
                 'dob' => 'required|date|before:today',
                 'token' => 'required|exists:tokens,token',
             ]);
