@@ -23,7 +23,7 @@ class Employee extends Model
         'guardian_name',
         'relation',
         'guardian_mobile',
-        'g_address',
+        'p_address',
         'image',
         'id_prove',
         'dob',
@@ -31,9 +31,9 @@ class Employee extends Model
     ];
 
     // Optionally, you can define the hidden fields (e.g., password or sensitive data)
-    protected $hidden = [
-        'id_prove', // If you don't want to expose it in responses
-    ];
+    // protected $hidden = [
+    //     'id_prove', // If you don't want to expose it in responses
+    // ];
 
     // You can also add custom attributes or methods if necessary
     // For example, formatting or handling file uploads
