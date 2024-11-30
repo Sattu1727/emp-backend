@@ -23,19 +23,26 @@ class EmployeeController extends Controller
                 'relation' => 'required|string|max:100',
                 'guardian_mobile' => 'required|string|max:15',
                 'p_address' => 'nullable|string|max:500',
-                'image' => 'required|mimes:webp,jpg,png|max:5120',
-                'id_prove' => 'required|mimes:pdf|max:5120',
+                'image' => 'nullable|mimes:webp,jpg,png|max:5120',
+                'id_prove' => 'nullable|mimes:pdf|max:5120',
                 'dob' => 'required|date|before:today',
                 'token' => 'required|exists:tokens,token',
             ]);
 
             $data = $request->all();
-            if ($request->hasFile('image')) {
-                $data['image'] = $request->file('image')->store('images', 'public');
-            }
-            if ($request->hasFile('id_prove')) {
-                $data['id_prove'] = $request->file('id_prove')->store('id_proves', 'public');
-            }
+          
+            // if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            //     // Process image file
+            // } else {
+            //     Log::error('Image file is not valid.');
+            //     return response()->json([
+            //         'status' => false,
+            //         'message' => 'Image upload failed.',
+            //     ], 400); // Bad Request
+            // }
+            // if ($request->hasFile('id_prove')) {
+            //     $data['id_prove'] = $request->file('id_prove')->store('id_proves', 'public');
+            // }
 
             $employee = Employee::create($data);
 
@@ -57,11 +64,15 @@ class EmployeeController extends Controller
                 'message' => 'Database error occurred. Please try again later.',
             ], 500); // Internal Server Error
         } catch (\Exception $e) {
-            Log::error('Unexpected error: ' . $e->getMessage());
+            Log::error('Unexpected error: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             return response()->json([
                 'status' => false,
                 'message' => 'An unexpected error occurred. Please try again later.',
-            ], 500); // Internal Server Error
+            ], 500); 
         }
     }
 

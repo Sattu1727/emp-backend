@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TokenController;
+use App\Http\Controllers\CompanyEmpController;
+
 
 
 Route::get('/user', function (Request $request) {
@@ -27,4 +29,9 @@ Route::post('/admin/reset', [AuthController::class, 'resetPassword']);
 // token
 Route::post('/generate-token', [TokenController::class, 'generateToken']);
 Route::get('/get-token', [TokenController::class, 'getToken']);
+
+
+
+
+Route::post('/company-emps', [CompanyEmpController::class, 'store']);
 
