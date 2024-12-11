@@ -22,7 +22,7 @@ class EmployeeController extends Controller
                 'guardian_name' => 'required|string|max:255',
                 'relation' => 'required|string|max:100',
                 'guardian_mobile' => 'required|string|max:15',
-                'p_address' => 'nullable|string|max:500',
+                'g_address' => 'nullable|string|max:500',
                 'image' => 'nullable|mimes:webp,jpg,png|max:5120',
                 'id_prove' => 'nullable|mimes:pdf|max:5120',
                 'dob' => 'required|date|before:today',
